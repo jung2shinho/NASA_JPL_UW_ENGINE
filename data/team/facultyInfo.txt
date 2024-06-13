@@ -1,0 +1,28 @@
+{
+    "name": "Prof. Arindam Das",
+    "position": "Assistant Professor (ECE)",
+    "org": "University of Washington",
+    "image": "Arindam_Das_headshot.jpg",
+    "bio":"Arindam Das is an assistant professor of electrical engineering at Eastern Washington University. His research activities include improving resilience of physical networks such as the power grid, statistical learning, educational data mining and network intrusion detection. Das is also an independent consultant with InBios, a Seattle based biotech company, and with Gryphon Connect, a San Diego based startup offering the first secure Wi-Fi router for safe home internet access. He currently leads their efforts for development of an intrusion detection system to protect home Internet of Things networks. With Inbios, he is involved in statistical learning aided Zika virus detection algorithms and early detection of pancreatic cancer based on different genetic and protein data."
+  },
+  {
+    "name": "Kavya Balasubramanian",
+    "position": "Teacher's Assistant",
+    "org": "University of Washington",
+    "image": "",
+    "bio":""
+  },
+  {
+    "name": "Ryan McGranaghan",
+    "position": "Principal Data Scientist",
+    "org": "NASA JPL",
+    "image": "Ryan_McGranaghan_headshot.jpg",
+    "bio":"I a Data Scientist and Research Scientist at the NASA Jet Propulsion Laboratory, where I work with the Machine Learning and Instrument Autonomy (MLIA) group to apply data science techniques robustly and responsibly to the Earth and Space Sciences, to cultivate cross-NASA Center collaborations, and to explore more cohesive and plural scientific communities. I am also a core team member for the NASA Transformation to Open Science (TOPS) initiative, improving the accessibility, inclusivity, and reproducibility of science. My career as my life is about creating and cultivating transdisciplinary and trans-community connections for the sake of scientific discovery and flourishing."
+  },
+  {
+    "name": "Jonathan Sauder",
+    "position": "Logistics Coordinator",
+    "org": "NASA JPL",
+    "image": "Jonathan_Sauder_headshot.jpg",
+    "bio":"I am currently a Senior Mechatronics Engineer at NASA-JPL in the Technology Infusion Group, which seeks to bridge the Technology Readiness Level (TRL)  “Valley of Death” for innovative concepts.  In the evenings, I lecture at the University of Southern California, where I teach “Design Theory and Methodology” and “Advanced Mechanical Design”. I am also actively engaged in speaking and writing, and serve on professional committees within AIAA and NASA."
+  }

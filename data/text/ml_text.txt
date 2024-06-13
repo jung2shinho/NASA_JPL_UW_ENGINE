@@ -1,0 +1,164 @@
+## Machine Learning
+Our objective is to model and predict GIC events to mitigate the impact on the critical infrastructure. Thus, developing nowcasting and predictive models for magnetic perturbation prediction (dB/dt) and GICs required the most meaningful ML algorithms. Our approach was to divide efforts into two different directions for prediction: one is predicting magnetic perturbation (dB/dt) and other is predicting GIC values directly. The reason why we had 2 directions is that “since GIC data is proprietary, the time variability of the horizontal component of the magnetic field perturbation (dB/dt) is used as a proxy for GICs” (Upendran, V. et al., 2022).
+
+### Preprocessing
+The preprocessing dataset involved three raw datasets SuperMAG (2010 - 2023), OMNI (2010 - 2023) and NERC GIC (2013 - 2023). As we have predictive direction, we prepared two different type of dataset: one is for magnetic perturbation prediction (joined between SuperMAG and OMNI dataset) and other is for GIC values prediction (joined between SuperMAG, OMNI and NERC GIC dataset). 
+
+### Dataset for Magnetic Perturbation Prediction (dB/dt)
+The dataset was created by joining the datetime between SuperMAG and OMNI dataset, both ranging from 2010 - 2023. The training dataset ranged from 2010 - 2019 and the testing dataset ranged from 2020 - 2023 (Upendran, V. et al., 2022). The diagram below shows the details of the data flow from collecting raw data to the complete data set files stored in Google Drive.
+
+![figure 33](/static/images/figure33.png)
+
+*Figure* 33: Diagram showing the process of creating ready for analysis
+
+### SuperMAG Dataset (dB/dt)
+SuperMAG is a global network of around 300 magnetometer ground stations employed in measurement of geomagnetic perturbations. The available dataset that we use in this study provides the geomagnetic perturbations measurements of 1-min cadence from around 300 stations around the globe. From the SuperMAG data, we are using the following measurements: datetime, glon, glat, mlon, mlat, mlt, dbn_nez and dbe_nez. But since the provided data are in 1-min cadences and for the purpose of stability and synchronization with OMNI dataset, we resampled the provided into 5-min cadences. Our preprocessing data also includes filling missing values, remove outliers and replacing the default values in the provided data
+
+### OMNI Dataset
+OMNI dataset provided near-Earth solar wind magnetic field and plasma parameter data from several spacecraft in geocentric or L1 (Lagrange point) orbits. From OMNI data, we retrieved 5-min cadence data since we believe that 5-min cadence data can provide more stability. And indeed, the fields that we utilized from OMNI data  are: datetime, bx_gse, by_gsm, bz_gsm, flow_speed, proton_density, T, pressure and clock angle of the IMF. 
+
+### Datasets NERC GIC Prediction
+The dataset was created by joining the GIC event datetime and by all the devices sensors of GIC measured within the 500 miles radius of the station where Magnetic perturbation measured showed in figure , from the NERC GIC and Supermag datasets, both ranging from 2013 - 2023. The training dataset is ranged from 2013 - 2022 and the testing dataset 2023. 
+
+![figure 34](/static/images/figure34.png)
+
+*Figure* 34: Stations and Devices sensor relationship where Station is 
+marked Red and Station is blue
+
+### NERC Geomagnetically Induced Current (GIC)
+The North American Electric Reliability Corporation (NERC) has a program to collect data on geomagnetic disturbances (GMDs). These disturbances occur when the sun ejects charged particles that interact with the Earth's magnetic field and atmosphere. When this interaction occurs, it can cause changes in the Earth's magnetic field, which might disrupt or damage important infrastructure, like power systems. In rare but strong GMD events, these changes can create strong direct currents in the electric power grid. These currents can affect the stability of the system, interfere with protective devices, and potentially damage large power transformers. This is why NERC is collecting data to better understand and manage the risks associated with GMDs.
+
+### SuperMAG Dataset (dB/dt)
+As described above, we want to understand the geomagnetic perturbations that have an effect on the GIC sensor measurements. Similarly to our other prediction on the magnetic perturbation, we are using the following measurements: datetime, glon, glat, mlon, mlat, mlt, dbn_nez and dbe_nez from the SuperMag datasets to predict the Nerc GIC.
+
+## Training & Testing Models (Results)
+Since we have 2 predictions: Magnetic perturbations and GICs. The main 3 models we are using are Multivariate Linear Regression, Random Forest Regressor and Long Short Term Memory Models
+Magnetic Perturbation Models
+
+### Multivariate Linear Regression (MLR) Model
+The Multivariate Linear Regression model is the first model that tried to understand the underlying data structure of our dataset. It also served as a baseline model for us to compare performance and figure out ways to improve performance of the models trained later on this report.
+
+### Results and Findings for Magnetic Perturbation (db/dt)
+For Multivariate Linear Regression, we trained models for the dataset timeline from 2010 - 2019 and testing in 2020 - 2023. Below will be some graphs of our results:
+Table 1: RMSE and MAE value for training and testing dataset
+
+|--------| Train dBn/dt | Train dBe/dt | Test dBn/dt | Test dBe/dt |
+|--------|---------|---------|---------|---------|
+| RMSE   | 7.357   | 7.932   | 7.530   | 7.702   |
+| MAE    | 5.095   | 4.954   | 5.298   | 4.905   |
+
+
+![plot 1](/static/images/plot1.png)
+
+*Plot* 1: Multivariate Linear Model - Plot of truth vs prediction zoom-in two days range of test dataset.
+
+![plot 2](/static/images/plot2.png)
+
+*Plot* 2: Multivariate Linear Model - Residual Error Plot for dBn/dt and dBe/dt prediction
+Throughout the results, we recognize that multivariate linear regression is not really doing great in the dataset, especially for the dBe/dt prediction. From the metrics table, we can see that both values for RMSE and MAE of dBe/dt in training and testing dataset are both all higher than those values of dBn/dt. This tells us that the model performs worse on the dBe/dt prediction. Look into plot 2, the line plot of truth vs prediction, in this plot we have zoom into 2 days range data of prediction and we can see that the model is not able to capture the dynamics of dBe/dt really well, meanwhile, it’s able to follow the trend that’s happening in the dBn/dt. One of the hypotheses that we have is that our multivariate linear regression is not able to capture the non-linear relationship between the features. Moreover, since we’re working with the time series data, the order of the data point and historical information are also really important. Since that, we have experimented with Ranform Forest, which is known for capturing non-linear relationships between features, and Long Short Term Memory (LSTM), which is known for keeping the order of data points and maintaining information in memory for longer periods. We have also shown the results and analysis for those models in later sections below.
+
+## Random Forest Regressor (RFR) Model
+
+**Hyperparameters**
+- max_depth = 90​
+- max_features = 0.5​
+- min_samples_leaf = 8​
+- min_samples_split = 5​
+- n_estimators = 911​
+- Loss = RMSE​
+
+### Results and Findings for Magnetic Perturbation (db/dt)
+
+![plot 3](/static/images/plot3.png)
+
+*Plot* 3: Random Forest Model - Plot of truth vs prediction zoom-in two days range of test dataset.
+
+![plot 4](/static/images/plot4.png)
+
+*Plot* 4: Random Forest Model - Residual Error Plot for dBn/dt and dBe/dt prediction
+RFRM resulted in mediocre performance in predicting magnetic perturbation values (nT) for the North and East axes.​
+However, the results are ​essential in understanding the dynamics and the characteristics of the data.​ The model captures low-magnitude and non-linear trends, however, fails to learn the high-magnitude dynamics of the data.​
+
+### Long Short Term Memory (LSTM) Model
+LSTM networks are a type of recurrent neural network (RNN) particularly well-suited for time series forecasting, sequential data, and tasks where the order of data points matters. They were designed to overcome the limitations of standard RNNs. Compared to RNNs, they have a more complex architecture that allows them to maintain information in memory for longer periods.
+The core components of LSTM are cell state and gates. *Figure*1 illustrates the mechanisms inside a LSTM unit, where i, f, g, and o denote the input gate, forget gate, cell candidate, and output gate, respectively. 
+
+By default, LSTM uses sigmoid activation to produce a filter for the information. Each gate produces different function:
+Forget Gate: Decides what information to discard from the cell state.
+Input Gate: Determines which new information to store in the cell state.
+Output Gate: Controls what information to output from the cell state to the next time step.
+Cell candidate: The cell state is updated with new information scaled by the input gate and old information scaled by the forget gate.
+
+![figure 35](/static/images/figure35.png)
+
+*Figure* 35: Standard LSTM unit
+
+*Figure* 36 illustrates the sequential data process inside a LSTM layer, through this unique architecture, LSTM comes out to be a powerful tool for capturing long-term dependencies and performing future prediction.
+
+![figure 36](/static/images/figure36.png)
+
+*Figure* 36: Standard LSTM Layer
+
+
+### Results and Findings for Magnetic Perturbation(Db/dt)
+
+![plot 5](/static/images/plot5.png)
+
+*Plot* 5: Long-Short Term Memory Model  - Plot of truth vs prediction zoom-in two days range of test dataset.
+
+![plot 6](/static/images/plot6.png)
+
+*Plot* 6: Long-Short Term Memory Model - Residual Error Plot for dBn/dt and dBe/dt prediction
+
+Our model was trained on the 2010-2019 dataset while validated on 2020 dataset. Our current configuration is: Batch_size = 360, Activation: ReLu, Optimization = Adam, Loss = MSE, Epochs = 50. Through the training process, we find out:
+Batch size significantly affects the performance and efficiency of our LSTM model. A smaller batch size induces a slower and less stable training process, while a larger batch size leads to poorer generalization.
+The default sigmoid activation did not work well on our dataset, instead, ReLu activation converged faster and achieved a lower training and validation loss.
+A single layer can achieve satisfying training performing on a single time step while multiple time steps require more complicated layers setting.
+
+### NERC GIC models
+All the models are using a dataset of the station in Washington DC(39.0, 281.8) where the NERC GIC values are the most extreme. In this case, we can see how each of the models' performances on prediction compare to the actual values of the GIC sensor.
+
+### Multivariate Linear Regression (MLR) Model
+**Hyperparameters**
+- Default Parameters from keras.
+
+**Results and Findings:**
+
+![plot 78](/static/images/plot78.png)
+
+*Plot* 7 & 8: Multivariate Linear Regression Model - GIC Predictions + Residual Error Plot 
+
+The model is able to pick up some trends of the data, which indicates we can definitely improve the models through hyperparameters.
+
+### Random Forest Regressor (RFR) Model
+**Hyperparameters:**
+- n_estimators=50
+- max_depth=5
+
+**Results and Findings**
+
+![plot 910](/static/images/plot910.png)
+
+*Plot* 9 & 10: Random Forest Regressor Model  - GIC Predictions + Residual Error Plot 
+
+This model seems to be flat prediction at around 2 Amperes. Similar to the Linear Regression Model, my prediction is that because we are overpopulated the normal data compare to when the GIC events extreme happened, which cause the models to predict at 2 amperes which give us the most accurate overall but result incorrect.
+
+### Long Short Term Memory (LSTM) Model
+**Layers of Neural Network**
+- LSTM(128, input_shape=(1, X_train_normalized.shape[1]))
+- Dense(64, activation='relu')
+- Dense(32, activation='relu')
+- Dense(1)
+
+**Model evaluation:**
+- optimizer='adam'
+- loss='mse'
+
+**Model training**:
+- 5 epoch
+
+**Results and Findings**
+
+![plot 1112](/static/images/plot1112.png)
+
+*Plot* 11 & 12: Long-Short Term Memory Model  - GIC Predictions + Residual Error Plot 

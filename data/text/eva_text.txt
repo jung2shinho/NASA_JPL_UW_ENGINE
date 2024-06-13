@@ -1,0 +1,83 @@
+## Extreme Value Analysis
+In the initial phase of our analysis, we concentrated on processing on the North American Electric Reliability Corporation (NERC) raw dataset, spanning the years 2013 to 2022. The GIC (Geomagnetic Induced Current) values consisted of positive and negative data, thus, we converted all values into their absolute magnitudes and then extracted the maximum values from each GIC event from each GIC device across the United States. Subsequently, we visualized these values on a geographic map to access their distributions with other statistical measures. This approach facilitated our initial understanding of the spatial distribution of geomagnetic disturbances across different regions over a long timespan.
+
+![figure 20](/static/images/figure20.png) 
+
+*Figure* 20: Visualization of GIC on USA map
+
+In the second phase of our analysis, we focused on estimating the hazard return levels for periods 1-in-100 years using the Generalized Extreme Value (GEV) method. This approach aimed to predict the worst-case scenarios for geomagnetically induced current (GIC) events based on our dataset. To implement this, we fit our extreme GIC data into the GEV model and specified a return period (T), which the model uses to generate the corresponding return values. A critical aspect of this process involved setting an appropriate threshold for exceedance. We experimented with various thresholds and conducted additional estimation for 1-10 year return levels to validate the trend accuracy and refine our GEV model. In our examination, we acquired a return value of 700.2 amp when setting the thres=15 and T=100, while the max extreme value in our current dataset is 483 amp.
+
+### Data and Model Setup
+**Dataset**: Extreme GIC measurements across the US, spanning from 2013 to 2022.
+**Extreme Value of Interest**: 483 amps
+- The highest GIC measured in the existing dataset.
+**Threshold Setting for GEV**: 15 amps
+- Data above this value are considered for the GEV fitting.
+
+**Return Periods**: We focus primarily on 100-year return level but also examine shorter periods(1-10 years) for comparative insights.
+
+### GEV Model Fitting
+- Fit the GEV Model: Using GIC data (2013 to 2022) that exceeds the thresholds.
+**Calculated Return Levels**:
+
+- For T=100 yrs, threshold =15 amps: The model predicted a return level of 700.2A
+- For T=10 yrs, threshold =42 amps: The model predicted a return level of 393.2A
+*NOTE*: See *Figure*s 21 and 22 to see the trend lines.
+
+### Threshold Sensitivity
+Lowering the threshold might include more data points, potentially smoothing out the return level curve but might also dilute the focus on truly extreme events. Conversely, a higher threshold could lead to data scarcity, increasing model uncertainty. 
+
+![figure 21](/static/images/figure21.png)
+
+*Figure* 21: Return level plot for 3 kinds of data filter                       
+
+![figure 22](/static/images/figure22.png)
+
+*Figure* 22: Threshold exceedance of 1-10 years GEV return level
+
+![figure 23](/static/images/figure23.png)
+
+*Figure* 23: ZT: T-year return level equation;
+*This is the event value that happens once in every T years*
+
+### Supernodes
+After identifying certain regions of the U.S (i.e Washington D.C) that have more activity than others, we focused on how these GICs differentiated based on regions and what their GIC characteristics were. At the start of our research, 18 significant events were identified between 2013 to 2022. We utilized the pyextremes package - a Python library aimed at performing univariate Extreme Value Analysis (EVA) - to examine these events by comparing GEV and Gaussian distributions of GICs to identify supernodal vs non-supernodal characteristics.
+
+### Quantile-Quantile Plots
+The quantile-quantile (QQ) plot, a model-independent method for comparing two empirically sampled statistical distributions (Braun & Murdoch, 2016), was employed to investigate changes in the distribution over its full range. This method does not require any prior assumptions of the functional form of the underlying distribution. The QQ plot can be used to test how the functional form changes over time, or whether the samples are drawn from distributions with the same model but with time-dependent moments. Moreover, if the underlying distribution is multicomponent, the QQ plot will reveal the (potentially time-dependent) transitions between regions of parameter space that contain the distinct components or populations of observations​​.
+
+### Supernode & Non-supernode Analysis
+We conducted an analysis of the QQ plot for the supernodes, defined as the nodes within a 50-mile radius around Washington, D.C. (latitude 38.8951, longitude -77.0364) and Michigan (latitude 44.3148, longitude -85.6024). The analysis included comparisons between the data and the normal distribution as well as the Generalized Extreme Value (GEV) distribution for both supernodes and non-supernode regions.
+
+![figure 24](/static/images/figure24.png)
+
+*Figure* 24: Supernode 1 (Device 10305, Event 2017 05 27)
+
+For Supernode 1 (Device 10305, Event 20170527) in *Figure* 1, we discovered significant deviation from the normal distribution, particularly in the upper tail. This deviation suggests the presence of extreme values that the normal distribution fails to capture. In contrast, the GEV distribution showed better alignment in the upper tail, indicating that it models extreme values more effectively, which is typical for data with heavy tails.
+
+![figure 25](/static/images/figure25.png)
+
+*Figure* 25: Supernode 2 (Device 10397, Event 2017 05 27)
+
+Similarly, in Supernode 2 (Device 10397, Event 20170527) in *Figure* 2, we observed significant deviations from the normal distribution. Consistent with the findings for the first supernode, the second supernode's data also exhibited a better fit with the GEV distribution, suggesting consistency in data behavior across different supernodes.
+
+![figure 26](/static/images/figure26.png)
+
+*Figure* 26: Non-supernode (Device 10081, Event 2017 05 27)
+
+For the non-supernode (Device 10081, Event 20170527) in *Figure* 3, the QQ plot revealed that the data align more closely with the normal distribution than with the GEV distribution. This pattern indicates fewer occurrences of extreme deviations and a more stable data pattern, typical of less critical infrastructure or differing operational influences.
+
+![figure 27](/static/images/figure27.png)
+
+*Figure* 27: Comparison of non-supernodes
+
+### Results
+When comparing QQ plots for Supernode 1 across multiple events (20150622, 20170527, 20180825, 20210512, 20220409) in *Figure* 4, we noted that the supernode data exhibited increasing deviations from the normal model over five years, particularly in the later years. This trend suggests a progression towards greater variability or an increase in operational anomalies as the system ages. 
+
+Conversely, the GEV model consistently provided a better fit, especially in the upper quantiles, across all years, indicating that the GEV distribution is more effective in capturing the extreme values within the dataset.
+
+In most cases, more than 90% of the data fall into a single component, the “core” of the distribution. The remaining 10% of data form a distinct “tail” component, which itself splits into two parts in some cases. Generally, the core component in the distribution shows little sensitivity to the detailed differences across these years. However, the two-part tail dominates the plot on the linear scale due to the heavy-tailed nature of the distribution.
+
+The Generalized Extreme Value (GEV) distribution, designed to model the tail behaviors of datasets, showed that when focusing on the largest sample quantile and observing its proximity and fit to the GEV line in the QQ plot, the data point for the largest sample quantile is closer to the theoretical line provided by the GEV distribution compared to the normal distribution. However, at values outside the 4-amps region, the QQ traces deviated from each other, highlighting the differences between the distributions.
+
+The approximate linearity of each segment indicated that the functional form of the distribution remained similar throughout the years, exhibiting a consistent departure pattern.

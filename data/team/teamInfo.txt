@@ -1,0 +1,53 @@
+[
+  {
+    "name": "Sean Jung",
+    "position": "Team Lead",
+    "research": "Network Analysis",
+    "image": "Sean_Jung_headshot.jpg",
+    "bio": "My name is Sean Jung, born and raised in Rutherford, New Jersey (located right outside of NYC). I graduated from the U.S Naval Academy back in 2015, with a B.S in Naval Architecture and Ocean Engineering, and am currently studying Electrical Engineering and Data Science at the University of Washington under its Master's program. Since childhood, I have always loved all things space, science, and exploration, so I am super excited about sharing the results and methods of our project! I also love traveling, running, and hiking mountains all over the world."
+  },
+  {
+    "name": "Long Nguyen",
+    "position": "Technical Lead",
+    "research": "Machine Learning",
+    "image": "Long_Nguyen_headshot.jpg",
+    "bio": "My name is Long Nguyen and I'm an international student from Vietnam. I am a first year master student majoring in Electrical Engineering at University of Washington. I also graduated from University of Washington in June 2022 majoring with focus on Computer Science and Mathematics. For me space is always interesting and mysterious, and science around space. My hobbies are playing sports and doing some side coding projects."
+  },
+  {
+    "name": "Jiaqi Dong",
+    "position": "Data Analyst",
+    "research": "Network Analysis",
+    "image": "Jiaqi_Dong_headshot.jpg",
+    "bio": "My name is Doria, and this is my first year in the University of Washington. I graduated from University of Electrical Science and Technology of China (UESTC), also majoring in Electrical Engineering. In my spare time, I love traveling and hanging out with my friends. I really enjoy this topic of solving space problems and exploring space."
+  },
+  {
+    "name": "Jui-Wei Chang",
+    "position": "Data Analyst",
+    "research": "Extreme Value Analysis",
+    "image": "Jui-Wei_Chang_headshot.jpg",
+    "bio": "My name is Chris, I am an international student from Taiwan. I graduated from National Taiwan University (NTU) in June 2023. I was majoring in mechanical engineering. Like Sean, I also love things regarding space and my dream was to be an astronaut when I was a kid. My hobbies are doing sports and music. Really excited to present this NASA project to the world!"
+  },
+  
+  {
+    "name": "Shiyun Zhou",
+    "position": "Data Analyst",
+    "research": "Extreme Value Analysis",
+    "image": "Shiyun_Zhou_headshot.jpg",
+    "bio": "My name is Amy, I am a first year master student from Shanghai, China. I graduated from Shanghai Jiao Tong University in 2022, majoring in Medical Laboratory Science. I love space exploration and data analytics. My hobbies include tennis and board games."
+  },
+  
+  {
+    "name": "Mazzy Chen",
+    "position": "Data Analyst",
+    "research": "Machine Learning",
+    "image": "Mazzy_Chen_headshot.jpg",
+    "bio": "My name is Mazzy, I am a first year master student majoring in Electrical Engineering. Before pursuing my master degree in UW, I had three years of experience in data analytics related to telecommunication projects, which share a sort of similarity with our project. Since I was a kid, I was fascinated by the mystery and immensity of space, so I am really excited to have the opportunity to work on this project! In my spare time, I enjoy playing music, reading and photography."
+  },
+  {
+    "name": "Tung Dang",
+    "position": "Data Engineer",
+    "research": "Machine Learning",
+    "image": "Tung_Dang_headshot.jpg",
+    "bio": "My name is Tung and this is my 2nd year in the Master program. Currently I am a full time Software Engineer at Boeing. The rapidly evolving landscape of artificial intelligence has captivated my curiosity, and I am eager to delve deeper into the intricacies of machine learning algorithms, their applications, and their potential to revolutionize various industries. I am passionate about harnessing data-driven insights and developing predictive models that contribute to solving complex problems."
+  }
+]

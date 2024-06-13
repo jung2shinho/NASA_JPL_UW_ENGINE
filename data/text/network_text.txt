@@ -1,0 +1,58 @@
+## Network Analysis
+Network Analysis contains data preprocessing, wavelet decomposition, and cross-correlation. Initially separated by events, measured GIC data from the North American Electric Reliability Corporation (NERC) was firstly preprocessed to prevent errors derived from data gaps and NaN values. Then, wavelet decomposition was applied to the resampled data, identifying strong changes in measured GIC values to infer fluctuations of GICs in the power grid. Lastly, cross-correlations between each Device ID were created using a global and sliding window analysis amongst different thresholds. Centrality measures are calculated to display the interconnectedness of the nodal graphs while overlaying this response network with the physical power grid over time to provide insight into the actual GIC fluctuation within the power grid.
+
+### Software Design
+
+![figure 28a](/static/images/figure28a.png)
+![figure 28b](/static/images/figure28b.png)
+![figure 28c](/static/images/figure28c.png)
+
+*Figure* 28 a/b/c: Data Flow for Network Analysis
+
+### Data Preprocessing
+At the beginning of network analysis, data preprocessing was performed to ensure data quality and consistency. Geomagnetic-induced current (GIC) data was downloaded from the NERC. Firstly, because the sampling rate of the original data is different, to unify the analysis conditions, the original GIC data observed from different monitors of one event were resampled for every one minute to make the data consistent in time. The missing data points were filled by using a three-order spline interpolation method which is a mathematical method used to create a smooth curve through a discrete set of data points.
+
+### Wavelet Transform
+The next step is to perform a wavelet transform on the GIC data. Due to the nonlinear and non-stationary characteristics of GIC data, wavelet transform was chosen as the main analysis tool. Wavelet transform is different from Fourier transform in that it can provide localized information in the time-frequency domain. This means that the wavelet transform can simultaneously give the frequency characteristics of the signal at a certain point in time, which is particularly important for the analysis of geomagnetic disturbance which changes rapidly in time. In our project, the Haar wavelet was performed on the discrete wavelet transform for the 4-level decomposition, which extracted detail coefficients and approximate coefficients respectively. The first-level coefficients (approximate coefficients) of decomposition captured the major trend of the signal and the second-level coefficients (detail coefficients) captured some rapid changes representing noise or sudden fluctuations. Then the results of wavelet transform were displayed in the form of heat maps, with different colors representing the different values of coefficients, making the results intuitive and easy to understand.
+
+### Correlation
+To gain insight into the interactions and effects between the different monitors, we calculated two types of correlations. Firstly, the maximum overlapping discrete wavelet transform was utilized to extract the wavelet coefficients. Then the correlations were calculated.
+Global correlation analysis: Correlation coefficients between every two monitors over one event were calculated to identify overall interdependencies.
+Sliding-window cross-correlation: Sliding window cross-correlation of time series by setting different time Windows were calculated to capture dynamic changes more finely
+
+### Threshold optimization
+In previous data processing, we have been using the global threshold to determine the connection of two monitors, which was simple and efficient to use. But this approach works better when all monitors are the same and evenly distributed. If this method is applied to our program, it will lead to severely distorted results: those sites with high coefficients are always connected to the network, while those with lower coefficients are rarely connected. Therefore, using a long time series to determine individual station thresholds will account for our local conditions. Firstly, the calculated value of sliding cross-correlations between each pair of stations will be applied to generate an intermediate adjacency matrix Aij*. By setting the global threshold, the connection above the threshold is 1, and the connection below the threshold is 0. The equation for Aij* is:
+
+Aij*(CT , t)=(|Cij(t)-CT|)
+
+where Cij(t) is the correlation between monitor i and monitor j at time t, and CT is the global threshold. Then the average degree ni(CT) at different global threshold CT values for each site need to be calculated:
+
+ni(CT)=(tTjN(t)Aij*(CT , t)N(t)-1)/T
+
+The purpose of this algorithm is to find a specific threshold CTi for each monitor so that the calculated average degree of each monitor is equal to the normalization degree n0. This requires iteratively adjusting CTi for each monitor until the target average degree is reached. The next step is to determine two thresholds, CTi and CTj . If the lower threshold of the two sites is satisfied CTij = min[CTi, CTj], it is considered that there is a connection between sites i and j. Finally, the specific threshold of each pair of monitors will be utilized to analyze the network.
+
+### Results
+After applying the Haar wavelet transform to the raw GIC data of even 2013_1002, two heat maps were obtained. *Figure* 29a  shows the major trend of GIC data observed in 2013 Oct 2nd, where the color shows the magnitude of the first-level wavelet coefficients and latitudes represent different monitors. *Figure* 29b shows the rapid changes of GIC data observed in 2013 Oct 2nd, where the color shows the magnitude of the second-level wavelet coefficients, and the redder the color the stronger the change.
+
+![figure 29a](/static/images/figure29a.png)
+![figure 29b](/static/images/figure29b.png)
+
+*Figure* 29 a/b: Wavelet heatmaps of first and second level coefficients for each device.
+
+![figure 30](/static/images/figure30.png)
+
+*Figure* 30: One-time cross correlation between coefficients.
+
+*Figure* 30 is to obtain a one-time cross-correlation on different scales of the wavelet transform. It shows a network diagram where the nodes represent different monitors and lines between nodes show correlations. The more nodes are wired, the higher the correlation with the other monitors.
+
+![figure 31](/static/images/figure31.png)
+
+*Figure* 31: Time-based heatmap showing the relationship between GIC devices
+
+*Figure* 31 is a time-based heatmap showing the relationship between GIC devices. The size of the circles indicates the local degree of each node (number of connections to that node in the network at that time). Only cross-correlation greater than 0.8 will increase the node degree at this time point. Then the color plots the magnitude of the correlation, and it will be presented only when the correlation of the node must both (i) exceed 80% of all values obtained at that node and (ii) the wavelet cross-correlation between a pair of nodes must exceed 0.85 within a 30-minute leading edge window, otherwise it will show a circle with no color.
+
+![figure 32](/static/images/figure32.png)
+
+*Figure* 32: Inverse trend between between degree of iteration and device-specific correlation thresholds for 5 different GIC devices or stations
+
+*Figure* 32 shows the relationship between degree and threshold after applying the degree algorithm. Then the n0 was set to equal 0.1, we could find different thresholds for each monitor. Finally, we could use it to find a new correlation between each monitor and make a clearer comparison with the physical power grid.

@@ -1,0 +1,7 @@
+## Methodology
+
+**Step 1**: Data Preprocessing is aligned with the time scale. Loaded the raw GIC data (NERC) and resampled data to align time scales.
+
+**Step 2**: Perform the wavelet transform (Discrete/Stationary Wavelet Transform) Extract coefficients for each GIC monitor (per event),visualized via heat map.
+
+**Step 3**: Find correlation between wavelet coefficients of each station. Utilized sliding window method for finding correlation.
